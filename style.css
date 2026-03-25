@@ -1,0 +1,83 @@
+:root {
+    --pink-bg: #120a0d;
+    --pink-panel: #1e1216;
+    --pink-main: #ff4d6d;
+    --pink-glow: #ff85a2;
+    --gold: #ffb703;
+    --stroke: 2px solid var(--pink-main);
+}
+
+body {
+    background: var(--pink-bg);
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0; padding: 20px;
+}
+
+/* Watermark & Version */
+.watermark { position: fixed; bottom: 10px; right: 10px; color: var(--pink-main); font-weight: bold; opacity: 0.6; text-shadow: 0 0 10px var(--pink-main); }
+.version { position: fixed; top: 10px; right: 10px; font-size: 10px; color: #555; }
+
+/* Typography */
+.glow-text {
+    text-align: center; color: var(--pink-glow);
+    text-shadow: 0 0 15px var(--pink-main);
+    letter-spacing: 3px; font-size: 28px;
+}
+
+.section-title { border-left: 4px solid var(--pink-main); padding-left: 10px; font-size: 18px; margin-top: 30px; }
+
+/* Buttons */
+button {
+    background: transparent; border: var(--stroke); color: white;
+    padding: 12px; cursor: pointer; transition: 0.3s; font-weight: bold;
+}
+
+button:hover { background: var(--pink-main); box-shadow: 0 0 15px var(--pink-glow); transform: scale(1.02); }
+
+.menu-grid { display: grid; gap: 10px; margin-top: 20px; }
+.btn-gold { border-color: var(--gold); color: var(--gold); }
+.btn-gold:hover { background: var(--gold); color: black; box-shadow: 0 0 15px var(--gold); }
+
+/* Pop-up System */
+.popup-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+    justify-content: center; align-items: center; z-index: 1000;
+}
+
+.popup-box {
+    background: var(--pink-panel); border: 3px solid var(--pink-glow);
+    padding: 20px; width: 90%; max-width: 450px; box-shadow: 0 0 30px var(--pink-main);
+}
+
+.wide { max-width: 650px; }
+
+/* Form Elements */
+input, select, textarea {
+    width: 100%; background: #000; border: 1px solid var(--pink-main);
+    color: white; padding: 12px; margin: 8px 0; box-sizing: border-box;
+}
+
+/* Inbox styling */
+.message-feed { max-height: 350px; overflow-y: auto; margin: 15px 0; }
+.msg-item {
+    border: 1px solid var(--pink-main); padding: 12px; margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.03); border-left: 5px solid var(--pink-glow);
+}
+
+.security-code {
+    background: #000; color: var(--gold); text-align: center;
+    font-size: 24px; padding: 15px; letter-spacing: 10px; font-weight: bold;
+    border: 1px dashed var(--pink-glow); margin: 10px 0;
+}
+
+/* Toast */
+.toast {
+    visibility: hidden; position: fixed; bottom: 50px; left: 50%;
+    transform: translateX(-50%); background: var(--pink-main);
+    padding: 12px 20px; border-radius: 4px; z-index: 2000;
+}
+.toast.show { visibility: visible; animation: fadeInUp 0.5s; }
+
+@keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
