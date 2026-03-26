@@ -9,28 +9,98 @@
 <body>
 
     <div class="watermark">LS Vatican</div>
-    <div class="version">Version 1.5.0 (Stable)</div>
+    <div class="version">v2.5.0 Gold Edition</div>
 
     <header>
         <h1 class="glow-text">EMAIL MAKER</h1>
         <div class="top-nav">
             <button class="btn-nav" onclick="togglePopup('feedbackPop')">FEEDBACK</button>
-            <button class="btn-nav" onclick="togglePopup('updateLogPop')">LOG</button>
+            <button class="btn-nav" onclick="togglePopup('loginPop')">LOGIN</button>
+            <button class="btn-nav btn-danger" onclick="togglePopup('logoutConfirmPop')">LOGOUT</button>
         </div>
     </header>
 
     <main>
-        <div class="menu-grid">
+        <!-- Dashboard Akun -->
+        <div class="account-dashboard">
+            <div class="acc-card">
+                <div class="acc-info">
+                    <small>ID AKUN</small>
+                    <b id="displayId">...</b>
+                </div>
+                <button class="btn-edit-small" onclick="togglePopup('changeIdPop')">GANTI</button>
+            </div>
+            <div class="acc-card">
+                <div class="acc-info">
+                    <small>KATA SANDI</small>
+                    <b id="displayPass">...</b>
+                </div>
+                <button class="btn-edit-small" onclick="togglePopup('changePassPop')">GANTI</button>
+            </div>
+        </div>
+
+        <!-- Menu Utama -->
+        <div class="action-grid">
             <button class="btn-main" onclick="togglePopup('createEmailPop')"><span>+</span> BUAT EMAIL</button>
             <button class="btn-main" onclick="openCompose()"><span>✉</span> KIRIM PESAN</button>
             <button class="btn-main btn-gold" onclick="openGlobalInbox()"><span>📥</span> GLOBAL INBOX</button>
         </div>
         
-        <h2 class="section-title">Daftar Email Anda</h2>
-        <div id="emailList" class="list-container"></div>
+        <h3 class="section-label">DAFTAR EMAIL TERBANTU</h3>
+        <div id="emailList" class="scroll-area"></div>
     </main>
 
-    <!-- Pop-up: Buat Email -->
+    <!-- POP-UP SISTEM (HIDDEN BY DEFAULT) -->
+
+    <!-- Ganti ID & Sandi -->
+    <div id="changeIdPop" class="popup-overlay">
+        <div class="popup-box">
+            <h2>Ubah ID Akun</h2>
+            <input type="text" id="newIdInput" placeholder="Masukkan ID baru...">
+            <div class="pop-actions">
+                <button class="btn-confirm" onclick="confirmChangeId()">SIMPAN</button>
+                <button class="btn-cancel" onclick="togglePopup('changeIdPop')">BATAL</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="changePassPop" class="popup-overlay">
+        <div class="popup-box">
+            <h2>Ubah Kata Sandi</h2>
+            <input type="password" id="newPassInput" placeholder="Sandi baru...">
+            <input type="password" id="confirmPassInput" placeholder="Ulangi sandi...">
+            <div class="pop-actions">
+                <button class="btn-confirm" onclick="confirmChangePass()">SIMPAN</button>
+                <button class="btn-cancel" onclick="togglePopup('changePassPop')">BATAL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login & Logout -->
+    <div id="loginPop" class="popup-overlay">
+        <div class="popup-box">
+            <h2>Login Akun Lama</h2>
+            <input type="text" id="loginId" placeholder="ID Akun...">
+            <input type="password" id="loginPass" placeholder="Kata Sandi...">
+            <div class="pop-actions">
+                <button class="btn-confirm" onclick="loginSystem()">MASUK</button>
+                <button class="btn-cancel" onclick="togglePopup('loginPop')">BATAL</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="logoutConfirmPop" class="popup-overlay">
+        <div class="popup-box small">
+            <h2>Konfirmasi Logout?</h2>
+            <p>Akun baru akan dibuat otomatis setelah logout.</p>
+            <div class="pop-actions">
+                <button class="btn-danger-final" onclick="logoutSystem()">YA, KELUAR</button>
+                <button class="btn-cancel" onclick="togglePopup('logoutConfirmPop')">BATAL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buat Email -->
     <div id="createEmailPop" class="popup-overlay">
         <div class="popup-box">
             <h2>Buat Email Baru</h2>
@@ -40,39 +110,37 @@
                 <option value="RopSukaNgaji.co.id">@RopSukaNgaji.co.id</option>
                 <option value="Tobrut.org">@Tobrut.org</option>
                 <option value="Tangerang.com">@Tangerang.com</option>
-                <<option value="ByOne.com">@ByOne.com</option>>
-                <<option value="RatnaCantik.co.id">@RatnaCantik.co.id</option>>
+                <option value="ByOne.com">@ByOne.com</option>
+                <option value="Vatican.co.id">@Vatican.co.id</option>
             </select>
             <div class="pop-actions">
-                <button class="btn-confirm" onclick="saveEmail()">SIMPAN</button>
+                <button class="btn-confirm" onclick="saveEmail()">BUAT</button>
                 <button class="btn-cancel" onclick="togglePopup('createEmailPop')">BATAL</button>
             </div>
         </div>
     </div>
 
-    <!-- Pop-up: Global Inbox -->
+    <!-- Global Inbox -->
     <div id="inboxPop" class="popup-overlay">
         <div class="popup-box wide">
             <h2>Global Inbox</h2>
-            <div class="inbox-toolbar">
+            <div class="bulk-bar">
                 <label><input type="checkbox" id="selectAll" onclick="toggleSelectAll()"> Pilih Semua</label>
-                <button class="btn-del-bulk" onclick="deleteSelectedMessages()">HAPUS TERPILIH</button>
+                <button class="btn-del-selected" onclick="deleteSelectedMessages()">HAPUS TERPILIH</button>
             </div>
-            <div id="messageList" class="message-feed"></div>
-            <button class="btn-close-full" onclick="togglePopup('inboxPop')">TUTUP INBOX</button>
+            <div id="messageList" class="msg-container"></div>
+            <button class="btn-close" onclick="togglePopup('inboxPop')">TUTUP</button>
         </div>
     </div>
 
-    <!-- Pop-up: Kirim Pesan (Compose) -->
+    <!-- Kirim Pesan -->
     <div id="composePop" class="popup-overlay">
         <div class="popup-box">
-            <h2>Kirim Email</h2>
-            <label>Pengirim:</label>
-            <select id="sendFrom"></select>
-            <label>Penerima:</label>
-            <select id="sendTo"></select>
+            <h2>Tulis Pesan</h2>
+            <label>Dari:</label><select id="sendFrom"></select>
+            <label>Ke:</label><select id="sendTo"></select>
             <input type="text" id="subjectInput" placeholder="Subjek...">
-            <textarea id="messageInput" rows="5" placeholder="Isi pesan panjang..."></textarea>
+            <textarea id="messageInput" rows="4" placeholder="Pesan..."></textarea>
             <div class="pop-actions">
                 <button class="btn-confirm" onclick="sendEmailAction()">KIRIM</button>
                 <button class="btn-cancel" onclick="togglePopup('composePop')">BATAL</button>
@@ -80,48 +148,31 @@
         </div>
     </div>
 
-    <!-- Pop-up: Feedback (Formspree) -->
+    <!-- Konfirmasi Hapus (Kode Acak) -->
+    <div id="deleteConfirmPop" class="popup-overlay">
+        <div class="popup-box small">
+            <h2>Verifikasi Hapus</h2>
+            <p>Ketik kode di bawah untuk menghapus:</p>
+            <div id="randomCodeDisplay" class="code-box"></div>
+            <input type="text" id="confirmCodeInput" placeholder="Ketik kode...">
+            <div class="pop-actions">
+                <button class="btn-danger-final" onclick="executeDelete()">HAPUS</button>
+                <button class="btn-cancel" onclick="togglePopup('deleteConfirmPop')">BATAL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Formspree -->
     <div id="feedbackPop" class="popup-overlay">
         <div class="popup-box">
             <h2>Feedback & Request</h2>
             <form action="https://formspree.io/f/xykbgrry" method="POST">
                 <input type="text" name="name" placeholder="Nama Anda" required>
                 <input type="email" name="email" placeholder="Email Anda" required>
-                <textarea name="message" rows="4" placeholder="Request domain baru atau saran..." required></textarea>
-                <div class="pop-actions">
-                    <button type="submit" class="btn-confirm">KIRIM</button>
-                    <button type="button" class="btn-cancel" onclick="togglePopup('feedbackPop')">BATAL</button>
-                </div>
+                <textarea name="message" rows="3" placeholder="Pesan..." required></textarea>
+                <button type="submit" class="btn-confirm" style="width:100%">KIRIM KE DEVELOPER</button>
             </form>
-        </div>
-    </div>
-
-    <!-- Pop-up: Konfirmasi Hapus (Sistem Kode) -->
-    <div id="deleteConfirmPop" class="popup-overlay">
-        <div class="popup-box small">
-            <h2 style="color: #ff4d6d;">Konfirmasi Hapus</h2>
-            <p>Ketik kode keamanan di bawah:</p>
-            <div id="randomCodeDisplay" class="security-code"></div>
-            <input type="text" id="confirmCodeInput" placeholder="Masukkan kode...">
-            <div class="pop-actions">
-                <button class="btn-danger-final" onclick="executeDelete()">HAPUS PERMANEN</button>
-                <button class="btn-cancel" onclick="togglePopup('deleteConfirmPop')">BATAL</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Pop-up: Update Log -->
-    <div id="updateLogPop" class="popup-overlay">
-        <div class="popup-box">
-            <h2>Update Log v1.5.0</h2>
-            <ul class="log-list">
-                <li>Sistem Global Inbox Terpadu.</li>
-                <li>Hapus Pesan/Email dengan Kode Keamanan.</li>
-                <li>Format Waktu Pengiriman Real-time.</li>
-                <li>Form Feedback Formspree.</li>
-                <li>Tema Pink Elegan Glowing & Stroke UI.</li>
-            </ul>
-            <button class="btn-close-full" onclick="togglePopup('updateLogPop')">OKE</button>
+            <button class="btn-cancel" onclick="togglePopup('feedbackPop')" style="width:100%; margin-top:5px;">BATAL</button>
         </div>
     </div>
 
